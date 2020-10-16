@@ -1,14 +1,14 @@
 # city_explorer_api
 
-Number and name of feature: 
+Number and name of feature: 2
 
-Estimate of time needed to complete: 
+Estimate of time needed to complete: 12 houra
 
-Start time: 
+Start time: 4:00 PM
 
-Finish time: 
+Finish time: current
 
-Actual time needed to complete: 
+Actual time needed to complete: current
 
 lab-06-repository
    ├── data
