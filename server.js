@@ -13,6 +13,7 @@ const app = express();
 app.use(cors());
 
 app.get('/', (request, response) => {
+  
   response.send('Home Page!');
 });
 
@@ -29,7 +30,7 @@ function aboutUsHandler(request, response) {
 
 // API Routes
 app.get('/location', handleLocation);
-app.get('/weather', handleweather);
+app.get('/weather', handleWeather);
 
 app.use('*', notFoundHandler);
 
@@ -55,11 +56,11 @@ function Location(city, geoData) {
   this.longitude = geoData[0].lon;
 }
 
-function handleweather(request, response) {
+function handleWeather(request, response) {
   try {
-    const data = require('/weather.json');
+    const data = require('./data/weather.json');
     const weatherData = [];
-    data.nearby_weather.forEach(entry => {
+    data.data.forEach(entry => {
       weatherData.push(new Weather(entry));
     });
     response.send(weatherData);
@@ -70,9 +71,9 @@ function handleweather(request, response) {
   }
 }
 
-function Weather(entry) {
-  this.time = entry.datetime;
-  this.forecast = entry.weather.description;
+function Weather(obj) {
+  this.time = obj.datetime;
+  this.forecast = obj.weather.description;
 }
 
 function notFoundHandler(request, response) {
