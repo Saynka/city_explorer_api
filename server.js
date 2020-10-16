@@ -8,7 +8,7 @@ const express = require('express');
 const cors = require('cors');
 
 // Application Setup
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
 
@@ -29,7 +29,7 @@ function aboutUsHandler(request, response) {
 
 // API Routes
 app.get('/location', handleLocation);
-app.get('/restaurants', handleRestaurants);
+app.get('/weather', handleweather);
 
 app.use('*', notFoundHandler);
 
@@ -55,14 +55,14 @@ function Location(city, geoData) {
   this.longitude = geoData[0].lon;
 }
 
-function handleRestaurants(request, response) {
+function handleweather(request, response) {
   try {
-    const data = require('./data/restaurants.json');
-    const restaurantData = [];
-    data.nearby_restaurants.forEach(entry => {
-      restaurantData.push(new Restaurant(entry));
+    const data = require('/weather.json');
+    const weatherData = [];
+    data.nearby_weather.forEach(entry => {
+      weatherData.push(new Weather(entry));
     });
-    response.send(restaurantData);
+    response.send(weatherData);
   }
   catch (error) {
     console.log('ERROR', error);
@@ -70,10 +70,9 @@ function handleRestaurants(request, response) {
   }
 }
 
-function Restaurant(entry) {
-  this.restaurant = entry.restaurant.name;
-  this.cuisines = entry.restaurant.cuisines;
-  this.locality = entry.restaurant.location.locality;
+function Weather(entry) {
+  this.time = entry.datetime;
+  this.forecast = entry.weather.description;
 }
 
 function notFoundHandler(request, response) {
