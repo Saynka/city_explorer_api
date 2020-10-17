@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 
 app.get('/', (request, response) => {
-  
+
   response.send('Home Page!');
 });
 
@@ -71,9 +71,10 @@ function handleWeather(request, response) {
   }
 }
 
+
 function Weather(obj) {
-  this.time = obj.datetime;
   this.forecast = obj.weather.description;
+  this.time = new Date(obj.valid_date).toDateString();
 }
 
 function notFoundHandler(request, response) {
