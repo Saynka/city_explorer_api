@@ -9,56 +9,46 @@ const superagent = require('superagent');
 const cors = require('cors');
 
 // Application Setup
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 
-//  API Route Definitions
-app.get('/location', handleLocation);
+// Route Definitions
+app.get('/location', locationHandler);
 app.get('/restaurants', restaurantHandler);
 app.get('/places', placesHandler);
-app.get('/weather', handleWeather);
 app.use('*', notFoundHandler);
 
+function locationHandler(request, response) {
+  let city = request.query.city;
+  let key = process.env.GEOCODE_API_KEY;
+  const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json&limit=1`;
 
-app.get('/', (request, response) => {
-
-  response.send('Home Page!');
-});
-
-app.get('/bad', (request, response) => {
-  throw new Error('poo');
-});
-
-// The callback can be a separate function. Really makes things readable
-app.get('/about', aboutUsHandler);
-
-function aboutUsHandler(request, response) {
-  response.status(200).send('About Us Page');
-}
-
-// HELPER FUNCTIONS
-
-//
-function handleLocation(request, response) {
-  try {
-    const geoData = require('./data/location.json');
-    const city = request.query.city;
-    const locationData = new Location(city, geoData);
-    response.send(locationData);
+  if (locations[url]) {
+    response.send(locations[url]);
   }
-  catch (error) {
-    console.log('ERROR', error);
-    response.status(500).send('So sorry, something went wrong.');
+  else {
+    superagent.get(url)
+      .then(data => {
+        const geoData = data.body[0]; // first one ...
+        const location = new Location(city, geoData);
+        locations[url] = location;
+        response.send(location);
+      })
+      .catch(() => {
+        console.log('ERROR', error);
+        response.status(500).send('So sorry, something went wrong.');
+      });
   }
 }
 
 function Location(city, geoData) {
   this.search_query = city;
-  this.formatted_query = geoData[0].display_name;
-  this.latitude = geoData[0].lat;
-  this.longitude = geoData[0].lon;
+  this.formatted_query = geoData.display_name;
+  this.latitude = geoData.lat;
+  this.longitude = geoData.lon;
 }
+
 
 function restaurantHandler(request, response) {
 
@@ -127,32 +117,9 @@ function Place(data) {
 }
 
 
-function handleWeather(request, response) {
-  try {
-    const data = require('./data/weather.json');
-    const weatherData = [];
-    data.data.forEach(entry => {
-      weatherData.push(new Weather(entry));
-    });
-    response.send(weatherData);
-  }
-  catch (error) {
-    console.log('ERROR', error);
-    response.status(500).send('So sorry, something went wrong.');
-  }
-}
-
-
-function Weather(obj) {
-  this.forecast = obj.weather.description;
-  this.time = new Date(obj.valid_date).toDateString();
-}
-
 function notFoundHandler(request, response) {
   response.status(404).send('huh?');
 }
-
-
 
 // Make sure the server is listening for requests
 app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
