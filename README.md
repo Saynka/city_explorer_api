@@ -8,9 +8,9 @@ Estimate of time needed to complete: 10
 
 Start time: 2:00 pm 10/17/2020
 
-Finish time: current
+Finish time: 6:00 pm 10/19/2020
 
-Actual time needed to complete: current
+Actual time needed to complete: 10
 
 lab-07-repository
    ├── .env

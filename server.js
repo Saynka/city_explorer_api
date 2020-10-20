@@ -72,7 +72,7 @@ function Location(city, locationData) {
   this.formatted_query = locationData.display_name;
 }
 
-// resturant function
+// restaurant function "yelp not zomato"
 function restaurantHandler(req, res) {
 
   const url = 'https://developers.zomato.com/api/v2.1/geocode';
