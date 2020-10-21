@@ -190,12 +190,12 @@ function trailHandler(req, res) {
       const trailData = hikingData.map(active => new Hiking(active));
       res.send(trailData);
     });
-    .catch(() => response.status(500).send('So sorry, something went wrong.'));
+    // .catch ((error) => response.status(500).send('So sorry, something went wrong.'));
 }
 
-function notFoundHandler(req, res) {
-  res.status(404).send('Try again.');
-}
+// function notFoundHandler(req, res) {
+//   res.status(404).send('Try again.');
+// }
 function Hiking(active) {
   this.name = active.name;
   this.location = active.location;
