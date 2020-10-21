@@ -142,28 +142,30 @@ function Place(data) {
 
 // weather function=working
 function handleWeather(req, res) {
-  try {
-    const data = require('./data/weather.json');
-    const weatherData = [];
-    data.data.forEach(entry => {
-      weatherData.push(new Weather(entry));
-    });
-    res.send(weatherData);
-  }
-  catch (error) {
-    console.log('ERROR', error);
-    res.status(500).send('So sorry, something went wrong.');
-  }
+  // try {
+  //   const data = require('./data/weather.json');
+  //   const weatherData = [];
+  //   data.data.forEach(entry => {
+  //     weatherData.push(new Weather(entry));
+  //   });
+  //   res.send(weatherData);
+  // }
+  // catch (error) {
+  //   console.log('ERROR', error);
+  //   res.status(500).send('So sorry, something went wrong.');
+  // }
 
-  let forcast = req.query.forcast;
   let key = process.env.WEATHER;
+  let forcast = req.query.search_query;
 
-  const URL = `http://api.weatherbit.io/v2.0/current?key=${key}&q=${forcast}&format=json`;
+  const URL = `http://api.weatherbit.io/v2.0/forecast/daily?city=${forcast}&country=us&days=8&key=${key}`;
 
   superagent.get(URL)
     .then(data => {
-      let location = new Location(forcast, data.body[0]);
-      res.status(200).json(location);
+      // let weatherArr = data.body.data;
+      let weathercon = data.body.data.map(entry => new Weather(entry));
+      console.log(weathercon);
+      res.send(weathercon);
     })
     .catch((error) => {
       console.log('error', error);
@@ -190,7 +192,7 @@ function trailHandler(req, res) {
       const trailData = hikingData.map(active => new Hiking(active));
       res.send(trailData);
     });
-    // .catch ((error) => response.status(500).send('So sorry, something went wrong.'));
+  // .catch ((error) => response.status(500).send('So sorry, something went wrong.'));
 }
 
 // function notFoundHandler(req, res) {
