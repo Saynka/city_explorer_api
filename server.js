@@ -7,6 +7,11 @@ require('dotenv').config();
 const express = require('express');
 const superagent = require('superagent');
 const cors = require('cors');
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
+// super fancy error call
+client.on('error', err => console.error(err));
+
 
 // Application Setup
 const PORT = process.env.PORT || 3000;
@@ -205,4 +210,7 @@ function notFoundHandler(req, res) {
 
 
 // Make sure the server is listening for reqs
-app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => console.log(`App is listening on ${PORT}`));
+  });
