@@ -50,20 +50,31 @@ function aboutUsHandler(req, res) {
 // working///////////////////////location function
 function locationHandler(req, res) {
   let city = req.query.city;
-  let key = process.env.LOCATIONIQ_API_KEY;
+  const URL = `https://us1.locationiq.com/v1/search.php?key=${process.env.LOCATIONIQ_API_KEY}&q=${city}&format=json`;
+  let SQL = 'SELECT * FROM location WHERE search_query LIKE ($1);';
+  let safeValue = [city];
 
-  const URL = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
+  client.query(SQL, safeValue)
+    .then(SQL => {
+      if (SQL.rowCount) {
+        res.status(200).send(SQL.rows[0]);
+      } else {
+        superagent.get(URL)
+          .then(data => {
+            let location = new Location(city, data.body[0]);
+            let sql = 'INSERT INTO location (search_query, formatted_query, latitude, longitude) VALUES ($1, $2, $3, $4);';
+            let safeValue = [location.search_query, location.formatted_query, location.latitude, location.longitude];
+            client.query(sql, safeValue);
+            res.status(200).send(location);
+          });
 
-  superagent.get(URL)
-    .then(data => {
-      let location = new Location(city, data.body[0]);
-      res.status(200).json(location);
-    })
-    .catch((error) => {
+      }
+    }).catch((error) => {
       console.log('error', error);
       res.status(500).send('Your API call did not work?');
     });
 }
+
 
 
 ///////////////////////  restaurant function "yelp not zomato"
@@ -201,6 +212,7 @@ function Hiking(active) {
   this.condition_date = active.conditionDate.slice(0, 9);
   this.condition_time = active.conditionDate.slice(11, 19);
 }
+
 
 
 function notFoundHandler(req, res) {
