@@ -10,7 +10,11 @@ const cors = require('cors');
 
 // Application Setup
 const PORT = process.env.PORT || 3000;
+
+// Start express
 const app = express();
+
+// use CORS
 app.use(cors());
 
 //  API Route Definitions
@@ -38,11 +42,7 @@ function aboutUsHandler(req, res) {
   res.status(200).send('About Us Page');
 }
 
-// HELPER FUNCTIONS
-
-//
-// Route handlers
-//location function=working
+// working///////////////////////location function
 function locationHandler(req, res) {
   let city = req.query.city;
   let key = process.env.LOCATIONIQ_API_KEY;
@@ -60,19 +60,8 @@ function locationHandler(req, res) {
     });
 }
 
-function notFoundHandler(req, res) {
-  res.status(404).send('Try again.');
-}
 
-// Constructors
-function Location(city, locationData) {
-  this.search_query = city;
-  this.latitude = locationData.lat;
-  this.longitude = locationData.lon;
-  this.formatted_query = locationData.display_name;
-}
-
-// restaurant function "yelp not zomato"
+///////////////////////  restaurant function "yelp not zomato"
 function restaurantHandler(req, res) {
 
   const url = 'https://developers.zomato.com/api/v2.1/geocode';
@@ -99,13 +88,8 @@ function restaurantHandler(req, res) {
 
 }
 
-function Restaurant(entry) {
-  this.restaurant = entry.restaurant.name;
-  this.cuisines = entry.restaurant.cuisines;
-  this.locality = entry.restaurant.location.locality;
-}
 
-// places function
+///////////////////////  places function
 function placesHandler(req, res) {
 
   const lat = req.query.latitude;
@@ -134,27 +118,13 @@ function placesHandler(req, res) {
     });
 }
 
-function Place(data) {
-  this.name = data.text;
-  this.type = data.properties.category;
-  this.address = data.place_name;
+function notFoundHandler(req, res) {
+  res.status(404).send('Try again.');
 }
 
-// weather function=working
-function handleWeather(req, res) {
-  // try {
-  //   const data = require('./data/weather.json');
-  //   const weatherData = [];
-  //   data.data.forEach(entry => {
-  //     weatherData.push(new Weather(entry));
-  //   });
-  //   res.send(weatherData);
-  // }
-  // catch (error) {
-  //   console.log('ERROR', error);
-  //   res.status(500).send('So sorry, something went wrong.');
-  // }
 
+// working///////////////////////  weather function
+function handleWeather(req, res) {
   let key = process.env.WEATHER;
   let forcast = req.query.search_query;
 
@@ -162,7 +132,6 @@ function handleWeather(req, res) {
 
   superagent.get(URL)
     .then(data => {
-      // let weatherArr = data.body.data;
       let weathercon = data.body.data.map(entry => new Weather(entry));
       console.log(weathercon);
       res.send(weathercon);
@@ -173,13 +142,7 @@ function handleWeather(req, res) {
     });
 }
 
-
-function Weather(obj) {
-  this.forecast = obj.weather.description;
-  this.time = new Date(obj.valid_date).toDateString();
-}
-
-// trail function=working
+// working///////////////////////  trail function
 function trailHandler(req, res) {
   let lat = req.query.latitude;
   let lon = req.query.longitude;
@@ -191,13 +154,36 @@ function trailHandler(req, res) {
       const hikingData = hike.body.trails;
       const trailData = hikingData.map(active => new Hiking(active));
       res.send(trailData);
-    });
-  // .catch ((error) => response.status(500).send('So sorry, something went wrong.'));
+    })
+    .catch((error) => response.status(500).send('So sorry, something went wrong.'));
 }
 
-// function notFoundHandler(req, res) {
-//   res.status(404).send('Try again.');
-// }
+/////////////////////// Constructors
+
+function Location(city, locationData) {
+  this.search_query = city;
+  this.latitude = locationData.lat;
+  this.longitude = locationData.lon;
+  this.formatted_query = locationData.display_name;
+}
+
+function Restaurant(entry) {
+  this.restaurant = entry.restaurant.name;
+  this.cuisines = entry.restaurant.cuisines;
+  this.locality = entry.restaurant.location.locality;
+}
+
+function Place(data) {
+  this.name = data.text;
+  this.type = data.properties.category;
+  this.address = data.place_name;
+}
+
+function Weather(obj) {
+  this.forecast = obj.weather.description;
+  this.time = new Date(obj.valid_date).toDateString();
+}
+
 function Hiking(active) {
   this.name = active.name;
   this.location = active.location;
@@ -212,6 +198,9 @@ function Hiking(active) {
 }
 
 
+function notFoundHandler(req, res) {
+  res.status(404).send('Try again.');
+}
 
 
 
