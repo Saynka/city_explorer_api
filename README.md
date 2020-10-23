@@ -1,6 +1,38 @@
 # city_explorer_api
 
-## LAB7
+## LAB 8
+
+Number and name of feature:#4 
+
+Estimate of time needed to complete: 10 hours 
+
+Start time: 9:30pm 10/21/2020
+
+Finish time: current
+
+Actual time needed to complete: current
+
+lab-08-repository
+   ├── .env
+   ├── .eslintrc.json
+   ├── .gitignore
+   ├── package-lock.json
+   ├── package.json
+   ├── schema.sql
+   └── server.js
+
+**Author**: Kale Lesko, Sean Hawkins
+**Version**: 1.0.2
+
+## Overview
+
+## Getting Started
+
+## Architecture
+
+## Change Log
+
+## LAB 7
 
 Number and name of feature: 4
 
@@ -45,7 +77,7 @@ lab-07-repository
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 
 
-## LAB6
+## LAB 6
 
 Number and name of feature: 4
 
@@ -86,7 +118,7 @@ at this point the architecture is mostly based in
 
 ## Change Log
 
-1:00 PM 10/16/20 - application if fully functional for location and weather and ready for the front end 
+1:00 PM 10/16/20 - application is fully functional for location and weather and ready for the front end 
 <!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
 01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.
