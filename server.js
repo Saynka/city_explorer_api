@@ -24,8 +24,8 @@ app.use(cors());
 
 //  API Route Definitions
 app.get('/location', locationHandler);
-app.get('/restaurants', restaurantHandler);
-app.get('/places', placesHandler);
+app.get('/yelp', yelpHandler);
+app.get('/movies', moviehandler);
 app.get('/weather', handleWeather);
 app.get('/trails', trailHandler);
 app.use('*', notFoundHandler);
@@ -78,26 +78,36 @@ function locationHandler(req, res) {
 
 
 ///////////////////////  restaurant function "yelp not zomato"
-function restaurantHandler(req, res) {
+function yelpHandler(req, res) {
 
-  const url = 'https://developers.zomato.com/api/v2.1/geocode';
+  const numPerPage = 2;
+  const page = req.query.search_query || 1;
+  const start = ((page - 1) * numPerPage + 1);
+
+  const url = 'https://api.yelp.com/v3./businesses/search';
+
   const queryParams = {
     lat: req.query.latitude,
+    start: start,
+    count: numPerPage,
     lng: req.query.longitude,
   };
 
+  // console.log(queryParams);
+
   superagent.get(url)
-    .set('user-key', process.env.ZOMATO_API_KEY)
+    .set('/yelp', process.env.YELP_API_KEY)
     .query(queryParams)
     .then((data) => {
-      const results = data.body;
+      const results = data.body.businesses;
       const restaurantData = [];
-      results.nearby_restaurants.forEach(entry => {
+      results.restaurant.forEach(entry => {
         restaurantData.push(new Restaurant(entry));
+        console.log(entry);
       });
       res.send(restaurantData);
     })
-    .catch(() => {
+    .catch((error) => {
       console.log('ERROR', error);
       res.status(500).send('So sorry, something went wrong.');
     });
@@ -106,7 +116,7 @@ function restaurantHandler(req, res) {
 
 
 ///////////////////////  places function
-function placesHandler(req, res) {
+function moviehandler(req, res) {
 
   const lat = req.query.latitude;
   const lng = req.query.longitude;
@@ -171,7 +181,7 @@ function trailHandler(req, res) {
       const trailData = hikingData.map(active => new Hiking(active));
       res.send(trailData);
     })
-    .catch((error) => response.status(500).send('So sorry, something went wrong.'));
+    .catch((error) => res.status(500).send('So sorry, something went wrong.'));
 }
 
 /////////////////////// Constructors
@@ -183,10 +193,12 @@ function Location(city, locationData) {
   this.formatted_query = locationData.display_name;
 }
 
-function Restaurant(entry) {
-  this.restaurant = entry.restaurant.name;
-  this.cuisines = entry.restaurant.cuisines;
-  this.locality = entry.restaurant.location.locality;
+function Restaurant(obj) {
+  this.name = obj.name;
+  this.image_url = obj.image_url;
+  this.price = obj.price;
+  this.rating = obj.rating;
+  this.url = obj.url;
 }
 
 function Place(data) {
