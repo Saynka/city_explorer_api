@@ -1,5 +1,41 @@
 # city_explorer_api
 
+## LAB 9
+
+Number and name of feature: #5 
+
+Estimate of time needed to complete: 8 hours
+
+Start time: 1:30p 10/24/2020 
+
+Finish time: current
+
+Actual time needed to complete: current
+
+lab-09-repository
+   ├── data
+   |    └── schema.sql
+   ├── .env
+   ├── .eslintrc.json
+   ├── .gitignore
+   ├── package-lock.json
+   ├── package.json
+   └── server.js
+   ├── modules
+   |    └── location.js
+   |    └── weather.js  
+
+**Author**: Kale Lesko, Sean Hawkins
+**Version**: 1.0.3
+
+## Overview
+
+## Getting Started
+
+## Architecture
+
+## Change Log
+
 ## LAB 8
 
 Number and name of feature:#4 
@@ -8,9 +44,9 @@ Estimate of time needed to complete: 10 hours
 
 Start time: 9:30pm 10/21/2020
 
-Finish time: current
+Finish time: 7:30pm
 
-Actual time needed to complete: current
+Actual time needed to complete: 10 hours
 
 lab-08-repository
    ├── .env
