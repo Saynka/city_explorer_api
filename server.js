@@ -77,31 +77,31 @@ function locationHandler(req, res) {
 
 
 
-///////////////////////  restaurant function "yelp not zomato"
+// working///////////////////////yelp function 
 function yelpHandler(req, res) {
 
   const numPerPage = 2;
   const page = req.query.search_query || 1;
   const start = ((page - 1) * numPerPage + 1);
 
-  const url = 'https://api.yelp.com/v3./businesses/search';
+  const url = 'https://api.yelp.com/v3/businesses/search';
 
   const queryParams = {
-    lat: req.query.latitude,
+    latitude: req.query.latitude,
     start: start,
     count: numPerPage,
-    lng: req.query.longitude,
+    longitude: req.query.longitude,
   };
 
   // console.log(queryParams);
 
   superagent.get(url)
-    .set('/yelp', process.env.YELP_API_KEY)
+    .set('Authorization', `Bearer ${process.env.API_KEY}`)
     .query(queryParams)
     .then((data) => {
       const results = data.body.businesses;
       const restaurantData = [];
-      results.restaurant.forEach(entry => {
+      results.forEach(entry => {
         restaurantData.push(new Restaurant(entry));
         console.log(entry);
       });
@@ -118,25 +118,24 @@ function yelpHandler(req, res) {
 ///////////////////////  places function
 function moviehandler(req, res) {
 
-  const lat = req.query.latitude;
-  const lng = req.query.longitude;
-  const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`;
+  let city = req.query.search_query;
+  let tok4 = process.env.MOVIE_API_KEY;
+  const url = `https://api.themoviedb.org/3/search/movie/?api_key=${tok4}&query=${city}`;
 
   const queryParams = {
-    access_token: process.env.MAPBOX_API_KEY,
+    access_token: process.env.MOVIE_API_KEY,
     types: 'poi',
     limit: 10,
   };
 
   superagent.get(url)
     .query(queryParams)
-    .then((data) => {
-      const results = data.body;
-      const places = [];
-      results.features.forEach(entry => {
-        places.push(new Place(entry));
-      });
-      res.send(places);
+    .then((results) => {
+      let searchMovie = results.body.results.map(movies => {
+        let newerMovies = new Place(movies)
+        return newerMovies;
+      })
+      res.status(200).send(searchMovie);
     })
     .catch((error) => {
       console.log('ERROR', error);
@@ -201,10 +200,14 @@ function Restaurant(obj) {
   this.url = obj.url;
 }
 
-function Place(data) {
-  this.name = data.text;
-  this.type = data.properties.category;
-  this.address = data.place_name;
+function Place(obj) {
+  this.title = obj.title;
+  this.overview = obj.overview;
+  this.average_votes = obj.vote_average;
+  this.total_votes = obj.vote_count;
+  this.image_url = `https://image.tmdb.org/t/p/w500${obj.poster_path}`;
+  this.popularity = obj.popluarity;
+  this.released_on = obj.release_date;
 }
 
 function Weather(obj) {

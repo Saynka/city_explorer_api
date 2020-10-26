@@ -8,9 +8,9 @@ Estimate of time needed to complete: 8 hours
 
 Start time: 1:30p 10/24/2020 
 
-Finish time: current
+Finish time: 3:30pm 10/25/2020 
 
-Actual time needed to complete: current
+Actual time needed to complete: 9 hours
 
 lab-09-repository
    ├── data
